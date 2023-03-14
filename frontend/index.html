@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>弹幕视频示例</title>
+    <style>
+        body {
+            overflow: hidden;
+        }
+        #danmu {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 999;
+        }
+        .danmu {
+            position: absolute;
+            font-size: 20px;
+            white-space: nowrap;
+            color: white;
+            text-shadow: black 1px 1px 1px;
+            animation: move linear 10s;
+            animation-fill-mode: forwards;
+        }
+        @keyframes move {
+            from {left: 100%}
+            to {left: -100%}
+        }
+    </style>
+</head>
+<body>
+<div id="danmu"></div>
+<script>
+    setInterval(() => {
+        fetch('http://localhost:8080/danmu')
+            .then(response => response.json())
+            .then(data => {
+                const danmu = document.getElementById('danmu');
+                for (let i = 0; i < data.length; i++) {
+                    const item = data[i];
+                    const span = document.createElement('span');
+                    span.className = 'danmu';
+                    span.style.color = item.rgb;
+                    span.innerText = item.content;
+                    span.style.top = Math.floor(Math.random() * 90) + '%';
+                    danmu.appendChild(span);
+                    setTimeout(() => {
+                        span.remove();
+                    }, 10000);
+                }
+            });
+    }, 2000);
+</script>
+</body>
+</html>
