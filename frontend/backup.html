@@ -46,10 +46,9 @@
             white-space: nowrap;
             color: white;
             text-shadow: black 1px 1px 1px;
-            animation: move linear 9s;
+            animation: move linear 5s;
             animation-fill-mode: forwards;
         }
-
         @keyframes move {
             from {
                 left: 90%
@@ -66,18 +65,10 @@
 </div>
 <button id="btn">开始</button>
 <script>
-    let iscontinue = false;
-    const button = document.getElementById('btn');
-    button.addEventListener('click', () => {
-        iscontinue = !iscontinue;
-        console.log(iscontinue);
-    });
-</script>
-<script>
     const usedTopValues = [];
     // url='http://localhost:8080/danmu';
-    url = 'https://cystudio.tech/danmu/danmu';
-    DanmuData = [];
+    url='https://cystudio.tech/danmu/danmu';
+    DanmuData=[];
     const container = document.getElementById('danmu');
     const startButton = document.getElementById('btn');
 
@@ -92,18 +83,16 @@
             // 开始滚动弹幕
             isScrolling = true;
             startButton.innerText = '暂停';
+            scrollDanmu();
         }
     });
 
     const updateDanmu = () => {
-        console.log('进入生产函数')
-        if (DanmuData.length > 50) {
-            setTimeout(() => {
-            }, 5000);
-            console.log('未从后端获取弹幕'+DanmuData.length)
+        if (DanmuData.length>200) {
+            setTimeout(()=>{}, 5000);
+            console.log(DanmuData.length);
             return;
         }
-        console.log('从后端获取了弹幕')
         fetch(url)
             .then(response => response.json())
             .then(data => {
@@ -116,17 +105,10 @@
             });
     }
 
-    const addDanmu = () => {
-        console.log('进入消费函数')
-        if (!iscontinue) {
-            return;
-        }
-        if (usedTopValues.length > 200) {
-            console.log('弹幕停止增加' + usedTopValues.length)
-            return;
-        }
-        console.log('增加了弹幕')
-        let item = DanmuData.shift();
+    const addDanmu = () =>{
+        console.log('开始执行addDanmu');
+        item=DanmuData.shift();
+        console.log(item);
         const span = container.appendChild(document.createElement('span'));
         span.className = 'danmu';
         span.style.color = item.rgb;
@@ -135,18 +117,15 @@
         // usedTopValues.push(topValue)
         span.style.top = topValue + '%';
         container.appendChild(span);
+        console.log(usedTopValues.length)
         setTimeout(() => {
             span.remove();
             usedTopValues.shift();
-        }, 8000);
-        if (DanmuData.length>100){
-            addDanmu();
-            console.log('消费函数复制')
-        }
+        }, 4000);
     }
 
-    setInterval(updateDanmu, 3000);
-    setInterval(addDanmu, 1000);
+    setInterval(updateDanmu, 100);
+    setInterval(addDanmu, 100);
 
 </script>
 </body>
